@@ -1,3 +1,4 @@
+
 #include "aquamarine/output/Output.hpp"
 #include <algorithm>
 #include <aquamarine/backend/DRM.hpp>
@@ -586,7 +587,8 @@ void Aquamarine::CDRMBackend::dispatchCommitResults() {
 }
 
 void Aquamarine::CDRMBackend::log(eBackendLogLevel l, const std::string& s) {
-    backend->log(l, s);
+    if (backend)
+        backend->log(l, s);
 }
 
 bool Aquamarine::CDRMBackend::sessionActive() {
@@ -2106,6 +2108,9 @@ void Aquamarine::SDRMConnector::connect(drmModeConnector* connector) {
     status = DRM_MODE_CONNECTED;
 
     recheckCRTCProps();
+
+    // invalidate any stale state
+    invalidateFrame();
 
     if (!backend->backend->ready)
         return;
